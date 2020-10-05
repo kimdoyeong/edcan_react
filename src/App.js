@@ -1,26 +1,69 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+class App extends React.Component {
+  state = {
+    text: "",
+    todo: [],
+  };
+  constructor(props) {
+    super(props);
+
+    this.toggleTodo = this.toggleTodo.bind(this);
+  }
+  toggleTodo(index) {
+    const { todo } = this.state;
+    const todoCloned = [...todo];
+
+    todoCloned[index].checked = !todoCloned[index].checked;
+
+    this.setState({
+      todo: todoCloned,
+    });
+  }
+  render() {
+    const { text, todo } = this.state;
+
+    console.log(todo);
+    return (
+      <div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            this.setState((state) => ({
+              todo: [
+                ...state.todo,
+                {
+                  text: state.text,
+                  checked: false,
+                },
+              ],
+              text: "",
+            }));
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => {
+              this.setState({ text: e.target.value });
+            }}
+          />
+          <button type="text">추가</button>
+        </form>
+        <div>
+          {todo.map((todo, i) => (
+            <div key={i}>
+              {todo.checked ? "✅" : ""}
+              {todo.text}
+              <button onClick={() => this.toggleTodo(i)}>
+                {todo.checked ? "체크 해제" : "체크"}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 }
-
 export default App;
