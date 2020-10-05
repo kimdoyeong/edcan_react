@@ -9,6 +9,7 @@ class App extends React.Component {
     super(props);
 
     this.toggleTodo = this.toggleTodo.bind(this);
+    this.deleteTodo = this.deleteTodo.bind(this);
   }
   toggleTodo(index) {
     const { todo } = this.state;
@@ -18,6 +19,16 @@ class App extends React.Component {
 
     this.setState({
       todo: todoCloned,
+    });
+  }
+  deleteTodo(index) {
+    const { todo } = this.state;
+    const todoCloned = [...todo];
+
+    delete todoCloned[index];
+
+    this.setState({
+      todo: todoCloned.filter((v) => v !== undefined),
     });
   }
   render() {
@@ -59,6 +70,7 @@ class App extends React.Component {
               <button onClick={() => this.toggleTodo(i)}>
                 {todo.checked ? "체크 해제" : "체크"}
               </button>
+              <button onClick={() => this.deleteTodo(i)}>삭제</button>
             </div>
           ))}
         </div>
