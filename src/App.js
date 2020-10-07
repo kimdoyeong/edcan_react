@@ -1,81 +1,42 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import video from "./video.mp4";
 
-class App extends React.Component {
-  state = {
-    text: "",
-    todo: [],
-  };
-  constructor(props) {
-    super(props);
+function App() {
+  const ref = useRef(null);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
 
-    this.toggleTodo = this.toggleTodo.bind(this);
-    this.deleteTodo = this.deleteTodo.bind(this);
+  function play() {
+    if (!ref.current) return;
+    ref.current.play();
   }
-  toggleTodo(index) {
-    const { todo } = this.state;
-    const todoCloned = [...todo];
-
-    todoCloned[index].checked = !todoCloned[index].checked;
-
-    this.setState({
-      todo: todoCloned,
-    });
+  function pause() {
+    if (!ref.current) return;
+    ref.current.pause();
   }
-  deleteTodo(index) {
-    const { todo } = this.state;
-    const todoCloned = [...todo];
-
-    delete todoCloned[index];
-
-    this.setState({
-      todo: todoCloned.filter((v) => v !== undefined),
-    });
-  }
-  render() {
-    const { text, todo } = this.state;
-
-    console.log(todo);
-    return (
+  return (
+    <div>
+      <video
+        src={video}
+        style={{ width: "100%", maxWidth: 540 }}
+        ref={ref}
+        onDurationChange={() => {
+          ref.current && setDuration(ref.current.duration);
+        }}
+        onTimeUpdate={() => {
+          ref.current && setCurrentTime(ref.current.currentTime);
+        }}
+      />
       <div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-
-            this.setState((state) => ({
-              todo: [
-                ...state.todo,
-                {
-                  text: state.text,
-                  checked: false,
-                },
-              ],
-              text: "",
-            }));
-          }}
-        >
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => {
-              this.setState({ text: e.target.value });
-            }}
-          />
-          <button type="text">추가</button>
-        </form>
-        <div>
-          {todo.map((todo, i) => (
-            <div key={i}>
-              {todo.checked ? "✅" : ""}
-              {todo.text}
-              <button onClick={() => this.toggleTodo(i)}>
-                {todo.checked ? "체크 해제" : "체크"}
-              </button>
-              <button onClick={() => this.deleteTodo(i)}>삭제</button>
-            </div>
-          ))}
-        </div>
+        <button onClick={play}>재생</button>
+        <button onClick={pause}>정지</button>
+        <button>반복</button>
       </div>
-    );
-  }
+      <div>
+        {currentTime}/{duration}
+      </div>
+    </div>
+  );
 }
+
 export default App;
